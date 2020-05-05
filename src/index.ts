@@ -6,7 +6,7 @@ const app = express();
 app.use(helmet());
 
 const apiServer = new ApiServer();
-apiServer.start(4000);
+apiServer.start(3000);
 
 type ModuleId = string | number;
 interface WebpackHotModule {

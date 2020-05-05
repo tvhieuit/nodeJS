@@ -14,3 +14,7 @@ create webpack.config.ts
 
 11. npm run webpack
 12. npm start
+
+#Secure 
+https://auth0.com/blog/use-typescript-to-create-a-secure-api-with-nodejs-and-express-getting-started/
+https://stackabuse.com/authentication-and-authorization-with-jwts-in-express-js/

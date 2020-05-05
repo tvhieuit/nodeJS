@@ -2,6 +2,7 @@ import * as bodyParser from 'body-parser';
 import { Server } from '@overnightjs/core';
 import { Request, Response, NextFunction } from 'express';
 import { Logger } from '@overnightjs/logger';
+import * as controllers from './controller/Controllers';
 
 class ApiServer extends Server {
 	private readonly SERVER_STARTED = 'Example server started on port: ';
@@ -17,7 +18,14 @@ class ApiServer extends Server {
 	}
 
 	private setupControllers(): void {
-
+		const ctlrInstances = [];
+		for (const name in controllers) {
+			if (controllers.hasOwnProperty(name)) {
+				const controller = (controllers as any)[name];
+				ctlrInstances.push(controller);
+			}
+		}
+		super.addControllers(ctlrInstances);
 	}
 
 	public start(port: number): void {
