@@ -1,47 +1,29 @@
-import * as bodyParser from 'body-parser';
-import { Server } from '@overnightjs/core';
-import { Request, Response, NextFunction } from 'express';
-import { Logger } from '@overnightjs/logger';
+import express from 'express';
+import helmet from 'helmet';
+import ApiServer from './ApiServer';
 
-class ApiServer extends Server {
-	private readonly SERVER_STARTED = 'Example server started on port: ';
-	private appserver: any;
+const app = express();
+app.use(helmet());
 
-	constructor() {
-		super(true);
-		this.app.use(bodyParser.json());
-		this.app.use(bodyParser.urlencoded({ extended: true }));
-		this.app.all('/*', this.setupCORS);
+const apiServer = new ApiServer();
+apiServer.start(4000);
 
-		this.setupControllers();
-	}
-
-	private setupControllers(): void {
-
-	}
-
-	public start(port: number): void {
-		this.appserver = this.app.listen(port, () => {
-			Logger.Imp(this.SERVER_STARTED + port);
-		});
-
-		this.appserver.setTimeout(5000);
-	}
-
-	public stop(): void {
-		this.appserver.close();
-	}
-
-	private setupCORS(req: Request, res: Response, next: NextFunction) {
-		res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-		res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-type, Accept, X-Access-Token, X-Key, Authorization');
-		res.header('Access-Control-Allow-Origin', '*');
-		if (req.method === 'OPTIONS') {
-			res.status(200).end();
-		} else {
-			next();
-		}
-	}
+type ModuleId = string | number;
+interface WebpackHotModule {
+	hot?: {
+		data: any;
+		accept(
+			dependencies: string[],
+			callback?: (updatedDependencies: ModuleId[]) => void,
+		): void;
+		accept(dependency: string, callback?: () => void): void;
+		accept(errHandler?: (err: Error) => void): void;
+		dispose(callback: (data: any) => void): void;
+	};
 }
 
-export default ApiServer;
+declare const module: WebpackHotModule;
+if (module.hot) {
+	module.hot.accept();
+	module.hot.dispose(() => apiServer.stop());
+}
