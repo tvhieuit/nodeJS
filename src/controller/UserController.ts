@@ -1,5 +1,5 @@
 import { OK, BAD_REQUEST } from 'http-status-codes';
-import { Controller, Get, Post } from "@overnightjs/core";
+import { Controller, Get, Post, Delete } from "@overnightjs/core";
 import { Request, Response, NextFunction } from "express";
 import { Logger } from '@overnightjs/logger';
 
@@ -64,6 +64,18 @@ export class UserController {
 
 		return res.status(OK).json(u);
 
+	}
+
+	@Delete(':id')
+	deleteuserById(req: Request, res: Response) {
+		try {
+			users.delete(Number(req.params.id));
+			return res.status(OK).json({ message: 'success' });
+		} catch (err) {
+			return res.status(BAD_REQUEST).json({
+				error: err.message,
+			});
+		}
 	}
 
 }
