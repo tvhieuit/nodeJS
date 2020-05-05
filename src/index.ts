@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import ApiServer from './ApiServer';
+import { Logger, LoggerModes } from '@overnightjs/logger';
 
 const app = express();
 app.use(helmet());
@@ -27,3 +28,5 @@ if (module.hot) {
 	module.hot.accept();
 	module.hot.dispose(() => apiServer.stop());
 }
+
+Logger.mode = LoggerModes.Console;

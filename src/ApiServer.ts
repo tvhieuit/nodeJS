@@ -1,7 +1,7 @@
 import * as bodyParser from 'body-parser';
 import { Server } from '@overnightjs/core';
 import { Request, Response, NextFunction } from 'express';
-import { Logger } from '@overnightjs/logger';
+import { Logger, LoggerModes } from '@overnightjs/logger';
 import * as controllers from './controller/Controllers';
 
 class ApiServer extends Server {
@@ -18,14 +18,14 @@ class ApiServer extends Server {
 	}
 
 	private setupControllers(): void {
-		const ctlrInstances = [];
-		for (const name in controllers) {
-			if (controllers.hasOwnProperty(name)) {
-				const controller = (controllers as any)[name];
-				ctlrInstances.push(controller);
+		const controllerInstances = [];
+		for (const name of Object.keys(controllers)) {
+			const controller = (controllers as any)[name];
+			if (typeof controller === 'function') {
+				controllerInstances.push(new controller());
 			}
 		}
-		super.addControllers(ctlrInstances);
+		super.addControllers(controllerInstances);
 	}
 
 	public start(port: number): void {

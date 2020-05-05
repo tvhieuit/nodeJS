@@ -1,4 +1,4 @@
-import UserController from './UserController';
+import { UserController } from './UserController';
 
 module.exports = {
 	UserController,
