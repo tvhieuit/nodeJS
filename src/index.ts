@@ -30,3 +30,19 @@ if (module.hot) {
 }
 
 Logger.mode = LoggerModes.Console;
+
+
+
+const mysql = require('mysql');
+const conn = mysql.createConnection({
+	host: 'localhost',
+	user: 'root',
+	password: 'Qwerty123@',
+	database: 'nodejs'
+});
+conn.connect((err: any) => {
+	if (err) throw err;
+	console.log('Connected');
+});
+
+export default conn;
