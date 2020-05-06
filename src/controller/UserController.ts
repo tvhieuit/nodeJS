@@ -41,23 +41,65 @@ export class UserController {
 
 	@Get(':id')
 	async getUserById(req: Request, res: Response) {
-		try {
-			conn.query('SELECT * FROM tb_user WHERE id = ? ', [req.params.id], (err: any, data: any) => {
-				if (err) {
-					throw err;
-				}
 
-				if (data.length > 0) {
-					res.status(OK).json(data[0]);
-				} else {
-					res.status(OK).json({});
-				}
+		Promise.all([await this.userById(req.params.id), await this.profileById(req.params.id)])
+			.then((values) => {
+				Logger.Info('Fuck!!!' + values);
+				res.status(OK).json({
+					user: values[0],
+					profile: values[1]
+				});
+			}).catch((err) => {
+				Logger.Info(err);
 			});
-		} catch (err) {
-			res.status(BAD_REQUEST).json({ message: err.message });
-			throw err;
-		}
 	}
+
+	async userById(id: any) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				await conn.query(`SELECT * FROM tb_user WHERE id = ${id} `, [id], (err: any, data: any) => {
+					if (err) {
+						return reject({ message: err.message });
+					}
+
+					Logger.Info(data, true);
+
+					if (data.length > 0) {
+						resolve(data[0]);
+					} else {
+						resolve({});
+					}
+				});
+			} catch (err) {
+				reject({ message: err.message });
+				throw err;
+			}
+		})
+	}
+
+
+	async profileById(id: any) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				await conn.query(`SELECT * FROM tb_profile WHERE id = ${id} `, [id], (err: any, data: any) => {
+					if (err) {
+						return reject({ message: err.message });
+					}
+					Logger.Info(data, true);
+
+					if (data.length > 0) {
+						resolve(data[0]);
+					} else {
+						resolve({});
+					}
+				});
+			} catch (err) {
+				reject({ message: err.message });
+				throw err;
+			}
+		})
+	}
+
 
 	@Get()
 	getUsers(req: Request, res: Response): any {
